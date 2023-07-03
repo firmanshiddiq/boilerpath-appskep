@@ -3,6 +3,8 @@ import { FormRow } from '../../components';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { updateUser } from '../../features/user/userSlice';
+
 
 const Profile = () => {
   const {isLoading, user} = useSelector((store)=>store.user);
@@ -21,7 +23,7 @@ const Profile = () => {
       toast.error('silahkan masukkan untuk semua field');
       return;
     }
-    // dispatch(updateUser(userData));
+    dispatch(updateUser(userData));
   };
 
   const handleChange = (e) => {
@@ -37,25 +39,28 @@ const Profile = () => {
         <div className='form-center'>
           <FormRow
             type='text'
+            labelText='Nama'
             name='name'
             value={userData.name}
             handleChange={handleChange}
           />
           <FormRow
             type='text'
-            labelText='last name'
+            labelText='Nama Belakang'
             name='lastName'
             value={userData.lastName}
             handleChange={handleChange}
           />
           <FormRow
             type='email'
+            labelText='Email'
             name='email'
             value={userData.email}
             handleChange={handleChange}
           />
           <FormRow
             type='text'
+            labelText='Lokasi'
             name='location'
             value={userData.location}
             handleChange={handleChange}

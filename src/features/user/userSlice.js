@@ -6,6 +6,9 @@ import {
     addUserToLocalStorage,
     removeUserLocalStorage,
 }   from '../../utils/localStorage'
+import { loginUserThunk, registerUserThunk, updateUserThunk } from './userThunk';
+
+
 
 const initialState ={
     isLoading:false,
@@ -13,33 +16,25 @@ const initialState ={
     user:getUserFromLocalStorage()
 }
 
+
 export const registerUser = createAsyncThunk(
     'user/register',
     async(user,thunkApi) =>{
-        try{
-            const resp = await customFetch.post(
-                '/auth/register',user
-            );
-            return resp.data;
-        }
-        catch(error){
-            return thunkApi.rejectWithValue(error.response.data.msg)
-        }
+        return registerUserThunk('/auth/register', user, thunkApi);
     }
 )
 
 export const loginUser = createAsyncThunk(
     'user/login',
     async(user,thunkApi) =>{
-        try{
-            const resp = await customFetch.post(
-                '/auth/login',user
-            );
-            return resp.data;
-        }
-        catch(error){
-            return thunkApi.rejectWithValue(error.response.data.msg)
-        }
+        return loginUserThunk('/auth/login', user, thunkApi);
+    }
+)
+
+export const updateUser = createAsyncThunk(
+    'user/updateUser',
+    async (user, thunkApi) => {
+        return updateUserThunk('/auth/updateUser', user, thunkApi);
     }
 )
 
@@ -55,7 +50,7 @@ const userSlice = createSlice({
             state.isSidebarOpen = false;
             removeUserLocalStorage();
             
-          },
+        },
     },
     extraReducers:{
         [registerUser.pending]:(state)=>{
@@ -83,6 +78,20 @@ const userSlice = createSlice({
             toast.success(`Selamat Datang Kembali ${user.name}`);
         },
         [loginUser.rejected]:(state,{payload})=>{
+            state.isLoading = false;
+            toast.error(payload);
+        },
+        [updateUser.pending]:(state)=>{
+            state.isLoading = true
+        },
+        [updateUser.fulfilled]:(state, {payload})=>{
+            const {user} = payload;
+            state.isLoading = false;
+            state.user = user;
+            addUserToLocalStorage(user)
+            toast.success('User Update!');
+        },
+        [updateUser.rejected]:(state,{payload})=>{
             state.isLoading = false;
             toast.error(payload);
         },

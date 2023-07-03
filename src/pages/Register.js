@@ -67,6 +67,7 @@ function Register() {
         {!values.isMember && (
             <FormRow 
             type='text'
+            labelText='Nama'
             name='name'
             value={values.name}
             handleChange={handleChange}
@@ -74,6 +75,7 @@ function Register() {
         )}
         <FormRow 
           type='email'
+          labelText='Email'
           name='email'
           value={values.email}
           handleChange={handleChange}
@@ -81,6 +83,7 @@ function Register() {
         <FormRow 
           type='password'
           name='password'
+          labelText='Password'
           value={values.password}
           handleChange={handleChange}
         />
