@@ -3,6 +3,11 @@ import { getUserFromLocalStorage } from "../../utils/localStorage";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { logoutUser } from "../user/userSlice";
+import { getAllJobs, hideLoading, showLoading } from "../allJobs/allJobsSlice";
+import { createJobThunk, deleteJobThunk, editJobThunk } from "./jobThunk";
+
+
+
 
 
 const initialState = {
@@ -20,26 +25,18 @@ const initialState = {
 
 export const createJob = createAsyncThunk(
     'job/createJob',
-    async(job, thunkApi)=>{
-        try {
-            const resp = await customFetch.post('/jobs', job, {
-              headers: {
-                Authorization: `Bearer ${thunkApi.getState().user.user.token}`,
-              },
-            });
-            thunkApi.dispatch(clearValues());
-            return resp.data;
-          } catch (error) {
-            
-            // logout user
-            if (error.response.status === 401) {
-                thunkApi.dispatch(logoutUser());
-                return thunkApi.rejectWithValue('Unauthorized! Logging Out...');
-            }
-          return thunkApi.rejectWithValue(error.response.data.msg);
-          }
-    }
+    createJobThunk
 );
+
+export const deleteJob = createAsyncThunk(
+    'job/deleteJob',
+    deleteJobThunk
+);
+
+export const editJob = createAsyncThunk(
+    'job/editJob',
+    editJobThunk
+)
 
 const jobSlice = createSlice({
     name: 'job',
@@ -50,9 +47,12 @@ const jobSlice = createSlice({
         },
         clearValues: ()=>{
             return {
-                ...initialState,jobLocation:getUserFromLocalStorage()?.location || ''
+                ...initialState,jobLocation:getUserFromLocalStorage()?.location || '',
             } 
-        }
+        },
+        setEditJob: (state, { payload }) => {
+            return { ...state, isEditing: true, ...payload };
+        },
     },
     extraReducers:{
         [createJob.pending]: (state) => {
@@ -66,10 +66,27 @@ const jobSlice = createSlice({
             state.isLoading = false;
             toast.error(payload);
         },
+        [deleteJob.fulfilled]: (state,{payload}) => {
+            toast.success(payload);
+        },
+        [deleteJob.rejected]: (state, { payload }) => {
+            toast.error(payload);
+        },
+        [editJob.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [editJob.fulfilled]: (state) => {
+            state.isLoading = false;
+            toast.success('Job DIubah..');
+        },
+        [editJob.rejected]: (state, { payload }) => {
+            state.isLoading = false;
+            toast.error(payload);
+        },
     }
 });
 
  
 
-  export const { handleChange,clearValues } = jobSlice.actions;
+  export const { handleChange,clearValues,setEditJob } = jobSlice.actions;
   export default jobSlice.reducer;

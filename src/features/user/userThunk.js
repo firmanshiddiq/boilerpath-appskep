@@ -5,7 +5,8 @@ export const registerUserThunk = async (url, user, thunkApi) => {
     try {
       const resp = await customFetch.post(url, user);
       return resp.data;
-    } catch (error) {
+    } 
+    catch (error) {
       return thunkApi.rejectWithValue(error.response.data.msg);
     }
 };
@@ -28,8 +29,8 @@ export const updateUserThunk = async (url, user, thunkApi) => {
         },
       });
       return resp.data;
-    } catch (error) {
-      // console.log(error.response);
+    } 
+    catch (error) {
       if (error.response.status === 401) {
         thunkApi.dispatch(logoutUser());
         return thunkApi.rejectWithValue('Unauthorized! Logging Out...');

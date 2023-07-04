@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { store } from '../../store';
 import FormRowSelect from '../../components/FormRowSelect';
-import { handleChange, clearValues, createJob } from '../../features/job/jobSlice';
+import { handleChange, clearValues, createJob, editJob } from '../../features/job/jobSlice';
 import { useEffect } from 'react';
 
 
@@ -30,8 +30,24 @@ const AddJob = ()=> {
       toast.error('Silahkan masukkan semua field');
       return;
     }
+    if (isEditing) {
+      dispatch(
+        editJob({
+          jobId: editJobId,
+          job: {
+            position,
+            company,
+            jobLocation,
+            jobType,
+            status,
+          },
+        })
+      );
+      return;
+    }
     dispatch(createJob({ position, company, jobLocation, jobType, status }));
 
+    
   };
   const handleJobInput = (e) => {
     const name = e.target.name;
@@ -40,17 +56,20 @@ const AddJob = ()=> {
 
   };
 
+
+
   useEffect(()=>{
-    dispatch(handleChange({
-      name: 'jobLocation', value: user.location
-    }))
+    if(!isEditing){
+      dispatch(handleChange({
+        name: 'jobLocation', value: user.location
+      }));
+    }
   },[]);
 
   return (
     <Wrapper>
       <form className='form'>
         <h3>{isEditing ? 'edit job' : 'tambah job'}</h3>
-
         <div className='form-center'>
           {/* position */}
           <FormRow
@@ -92,8 +111,6 @@ const AddJob = ()=> {
             handleChange={handleJobInput}
             list={jobTypeOptions}
           />
-
-
 
           {/* btn container */}
           <div className='btn-container'>
