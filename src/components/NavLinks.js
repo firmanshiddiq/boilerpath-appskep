@@ -12,14 +12,14 @@ const NavLinks = ({toggleSidebar})=> {
         const {text,path,id,icon} = link
         return (
             <NavLink to={path} className={({isActive}) => {
-            return isActive? 'nav-link active' : 'nav-link'
-            }}
-            key={id}
-            onClick={toggleSidebar}
-            end
-            >
-            <span className='icon'>{icon}</span>
-            {text}
+              return isActive? 'nav-link active' : 'nav-link'
+              }}
+              key={id}
+              onClick={toggleSidebar}
+              end
+              >
+              <span className='icon'>{icon}</span>
+              {text}
             </NavLink>
         )
         })}

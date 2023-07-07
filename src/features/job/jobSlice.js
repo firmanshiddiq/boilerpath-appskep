@@ -43,7 +43,8 @@ const jobSlice = createSlice({
         },
         clearValues: ()=>{
             return {
-                ...initialState,jobLocation:getUserFromLocalStorage()?.location || '',
+                ...initialState,
+                jobLocation:getUserFromLocalStorage()?.location || '',
             } 
         },
         setEditJob: (state, { payload }) => {

@@ -1,4 +1,6 @@
 import customFetch from '../../utils/axios';
+import { clearAllJobs } from '../allJobs/allJobsSlice';
+import { clearValues } from '../job/jobSlice';
 import { logoutUser } from './userSlice';
 
 export const registerUserThunk = async (url, user, thunkApi) => {
@@ -38,3 +40,15 @@ export const updateUserThunk = async (url, user, thunkApi) => {
       return thunkApi.rejectWithValue(error.response.data.msg);
     }
 };
+
+export const clearStoreThunk = async(msg, thunkApi) => {
+  try{
+    thunkApi.dispatch(logoutUser(msg));
+    thunkApi.dispatch(clearAllJobs());
+    thunkApi.dispatch(clearValues());
+    return Promise.resolve();
+  }
+  catch(error){
+    return Promise.reject();
+  }
+}
