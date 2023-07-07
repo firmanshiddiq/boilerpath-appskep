@@ -1,6 +1,7 @@
 import customFetch from "../../utils/axios";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
+import { getAllJobsThunk, showStatsThunk } from "./allJobsThunk";
 
 const initialFiltersState = {
   search: '',
@@ -23,21 +24,14 @@ const initialState = {
 
 export const getAllJobs = createAsyncThunk(
   'allJobs/getJobs',
-  async(_,thunkApi)=>{
-    let url = `/jobs`;
-    try {
-      const resp = await customFetch.get(url, {
-        headers: {
-          authorization: `Bearer ${thunkApi.getState().user.user.token}`,
-        },
-      });
-      console.log(resp.data);
-      return resp.data;
-    } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data.msg);
-    }
-  }
+  getAllJobsThunk
 )
+
+export const showStats = createAsyncThunk(
+  'allJobs/showStats',
+  showStatsThunk
+)
+
 
 const allJobsSlice = createSlice({
     name: 'allJobs',
@@ -48,6 +42,16 @@ const allJobsSlice = createSlice({
       },
       hideLoading: (state) =>{
         state.isLoading = true;
+      },
+      handleChange: (state, { payload: { name, value } }) => {
+        state.page = 1;
+        state[name] = value;
+      },
+      clearFilters: (state) => {
+        return { ...state, ...initialFiltersState };
+      },
+      changePage : (state,{payload}) => {
+        state.page = payload;
       }
     },
     extraReducers:{
@@ -62,9 +66,27 @@ const allJobsSlice = createSlice({
         state.isLoading = false;
         toast.error(payload);
       },
+      [showStats.pending]: (state) => {
+        state.isLoading = true;
+      },
+      [showStats.fulfilled]: (state, { payload }) => {
+        state.isLoading = false;
+        state.stats = payload.defaultStats;
+        state.monthlyApplications = payload.monthlyApplications;
+      },
+      [showStats.rejected]: (state, { payload }) => {
+        state.isLoading = false;
+        toast.error(payload);
+      },
+      [getAllJobs.fulfilled]: (state, { payload }) => {
+        state.isLoading = false;
+        state.jobs = payload.jobs;
+        state.numOfPages = payload.numOfPages;
+        state.totalJobs = payload.totalJobs;
+      },
     }
 });
 
 
-export const {showLoading, hideLoading} = allJobsSlice.actions;
+export const {showLoading, hideLoading,handleChange, clearFilters,changePage} = allJobsSlice.actions;
 export default allJobsSlice.reducer;

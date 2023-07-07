@@ -6,10 +6,6 @@ import { logoutUser } from "../user/userSlice";
 import { getAllJobs, hideLoading, showLoading } from "../allJobs/allJobsSlice";
 import { createJobThunk, deleteJobThunk, editJobThunk } from "./jobThunk";
 
-
-
-
-
 const initialState = {
     isLoading: false,
     position: '',
