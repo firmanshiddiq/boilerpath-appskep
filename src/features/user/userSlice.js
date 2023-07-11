@@ -57,53 +57,55 @@ const userSlice = createSlice({
             }
         },
     },
-    extraReducers:{
-        [registerUser.pending]:(state)=>{
-            state.isLoading = true
-        },
-        [registerUser.fulfilled]:(state, {payload})=>{
-            const {user} = payload;
+    extraReducers: (builder) => {
+        builder
+          .addCase(registerUser.pending, (state) => {
+            state.isLoading = true;
+          })
+          .addCase(registerUser.fulfilled, (state, { payload }) => {
+            const { user } = payload;
             state.isLoading = false;
             state.user = user;
             addUserToLocalStorage(user);
-            toast.success(`Hello ${user.name}`);
-        },
-        [registerUser.rejected]:(state,{payload})=>{
+            toast.success(`Hello There ${user.name}`);
+          })
+          .addCase(registerUser.rejected, (state, { payload }) => {
             state.isLoading = false;
             toast.error(payload);
-        },
-        [loginUser.pending]:(state)=>{
-            state.isLoading = true
-        },
-        [loginUser.fulfilled]:(state, {payload})=>{
-            const {user} = payload;
+          })
+          .addCase(loginUser.pending, (state) => {
+            state.isLoading = true;
+          })
+          .addCase(loginUser.fulfilled, (state, { payload }) => {
+            const { user } = payload;
             state.isLoading = false;
             state.user = user;
-            addUserToLocalStorage(user)
-            toast.success(`Selamat Datang Kembali ${user.name}`);
-        },
-        [loginUser.rejected]:(state,{payload})=>{
+            addUserToLocalStorage(user);
+            toast.success(`Welcome Back ${user.name}`);
+          })
+          .addCase(loginUser.rejected, (state, { payload }) => {
             state.isLoading = false;
             toast.error(payload);
-        },
-        [updateUser.pending]:(state)=>{
-            state.isLoading = true
-        },
-        [updateUser.fulfilled]:(state, {payload})=>{
-            const {user} = payload;
+          })
+          .addCase(updateUser.pending, (state) => {
+            state.isLoading = true;
+          })
+          .addCase(updateUser.fulfilled, (state, { payload }) => {
+            const { user } = payload;
             state.isLoading = false;
             state.user = user;
-            addUserToLocalStorage(user)
-            toast.success('User Update!');
-        },
-        [updateUser.rejected]:(state,{payload})=>{
+            addUserToLocalStorage(user);
+    
+            toast.success(`User Updated!`);
+          })
+          .addCase(updateUser.rejected, (state, { payload }) => {
             state.isLoading = false;
             toast.error(payload);
-        },
-        [clearStore.rejected]:()=>{
-            toast.error('Terdapat kesalahan...');
-        },
-    }
+          })
+          .addCase(clearStore.rejected, () => {
+            toast.error('There was an error..');
+          });
+    },
 })
 export const {toggleSidebar, logoutUser} = userSlice.actions;
 export default userSlice.reducer;

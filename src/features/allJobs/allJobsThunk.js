@@ -26,7 +26,7 @@ export const showStatsThunk = async(_, thunkApi) => {
           authorization: `Bearer ${thunkApi.getState().user.user.token}`,
         },
       });
-      console.log(resp.data);
+      // console.log(resp.data);
       return resp.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data.msg);
